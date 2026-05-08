@@ -1,6 +1,6 @@
 const STORAGE_KEY = "anxiety-checker-entries-v1";
-const OPTIONS_KEY = "anxiety-checker-options-v3";
-const LEGACY_OPTIONS_KEYS = ["anxiety-checker-options-v2", "anxiety-checker-options-v1"];
+const OPTIONS_KEY = "anxiety-checker-options-v4";
+const LEGACY_OPTIONS_KEYS = [];
 const SCHEMA_VERSION = 1;
 
 const formSections = [
@@ -12,65 +12,71 @@ const formSections = [
       {
         id: "duration",
         label: "Approximate duration",
-        type: "radio",
+        type: "checkbox",
         options: ["Less than 5 minutes", "5-10 minutes", "10-20 minutes", "20-30 minutes", "30-60 minutes", "More than 1 hour", "Not sure"]
       },
       { id: "intensity", label: "Intensity at peak", type: "range", min: 0, max: 10, hint: "0 = none, 10 = unbearable" },
-      { id: "onset", label: "Did it feel sudden or gradual?", type: "radio", options: ["Built up slowly", "Came out of nowhere", "Not sure", "Started after a clear trigger"] }
+      { id: "onset", label: "Did it feel sudden or gradual?", type: "checkbox", options: ["Built up slowly", "Came out of nowhere", "Not sure", "Started after a clear trigger"] }
     ]
   },
   {
     title: "Before: Location",
     fields: [
-      { id: "beforeLocation", label: "Where were you before the episode started?", type: "radio", options: ["Bed / trying to sleep", "Car", "Home", "Medical setting", "Online / phone call", "Other", "Outdoors", "Public transport", "Restaurant / cafe", "Shop / mall", "Social setting", "Work / school"] }
+      { id: "beforeLocation", label: "Where were you before the episode started?", type: "checkbox", options: ["Bed", "Cafe", "Car", "Home", "Mall", "Medical setting", "Office", "Online", "Outdoors", "Phone call", "Public transport", "Restaurant", "Shop", "Social setting", "Work", "Other"] }
     ]
   },
   {
     title: "Before: Activity",
     fields: [
-      { id: "beforeActivity", label: "What were you doing before it started?", type: "checkbox", options: ["Doing chores", "Driving", "Eating", "Exercising", "In a meeting / class", "Nothing obvious", "Other", "Resting", "Scrolling online", "Shopping", "Talking to someone", "Travelling", "Trying to sleep", "Waiting for something", "Waking up", "Working / studying"] }
+      { id: "beforeActivity", label: "What were you doing before it started?", type: "checkbox", options: ["Doing chores", "Driving", "Eating", "Exercising", "In a meeting", "Nothing obvious", "Resting", "Scrolling online", "Shopping", "Talking to someone", "Travelling", "Trying to sleep", "Waiting for something", "Waking up", "Working", "Other"] }
     ]
   },
   {
     title: "Before: Company",
     fields: [
-      { id: "beforeCompany", label: "Who were you with when it started?", type: "radio", options: ["Alone", "Colleagues / classmates", "Family", "Friends", "On a call / online with someone", "Other", "Partner", "Strangers nearby"] }
+      { id: "beforeCompany", label: "Who were you with when it started?", type: "checkbox", options: ["Alone", "Colleagues", "Family", "Friends", "Online with someone", "On a call with someone", "Partner", "Strangers nearby", "Other"] }
     ]
   },
   {
     title: "Before: State",
     fields: [
-      { id: "beforeState", label: "What was your state before it started?", type: "checkbox", options: ["After caffeine / energy drink", "After little sleep", "Calm", "Dehydrated", "Hungry", "Irritable", "Numb / disconnected", "Other", "Overstimulated", "Physically unwell", "Running late", "Sad / low", "Socially uncomfortable", "Stressed", "Tired", "Trapped / unable to leave", "Under pressure"] }
+      { id: "beforeState", label: "What was your state before it started?", type: "checkbox", options: ["After caffeine", "After energy drink", "After little sleep", "Calm", "Dehydrated", "Disconnected", "Hungry", "Irritable", "Numb", "Overstimulated", "Physically unwell", "Running late", "Sad", "Socially uncomfortable", "Stressed", "Tired", "Trapped", "Unable to leave", "Under pressure", "Other"] }
     ]
   },
   {
-    title: "Start or Worsening",
+    title: "Start",
     fields: [
-      { id: "episodeTriggers", label: "What seemed to start or worsen it?", type: "checkbox", options: ["Being unable to leave", "Chest sensation", "Conflict", "Crowds / noise / lights", "Dizziness", "Fast heartbeat", "Feeling hot", "Feeling judged", "Health worry", "I do not know", "Money / future worry", "Other", "Relationship worry", "Remembering something stressful", "Shortness of breath", "Stomach discomfort", "Work / school worry"] }
+      { id: "startTriggers", label: "What seemed to start it?", type: "checkbox", options: ["Being unable to leave", "Bright lights", "Chest sensation", "Conflict", "Crowds", "Dizziness", "Fast heartbeat", "Feeling hot", "Feeling judged", "Future worry", "Health worry", "I do not know", "Loud noise", "Money worry", "Relationship worry", "Remembering something stressful", "Shortness of breath", "Stomach discomfort", "Work worry", "Other"] }
+    ]
+  },
+  {
+    title: "Worsening",
+    fields: [
+      { id: "worseningFactors", label: "What seemed to make it worse?", type: "checkbox", options: ["Being unable to leave", "Bright lights", "Checking symptoms", "Chest sensation", "Conflict", "Crowds", "Dizziness", "Fast heartbeat", "Feeling hot", "Feeling judged", "Future worry", "Health worry", "I do not know", "Loud noise", "Money worry", "Relationship worry", "Remembering something stressful", "Shortness of breath", "Stomach discomfort", "Work worry", "Other"] }
     ]
   },
   {
     title: "During: Location",
     fields: [
-      { id: "duringLocation", label: "Where were you during the worst part?", type: "radio", options: ["Bathroom", "Car", "Other", "Outside", "Public transport", "Quiet room", "Same place as before", "Shop / public place", "Someone else's home", "Work / school area"] }
+      { id: "duringLocation", label: "Where were you during the worst part?", type: "checkbox", options: ["Bathroom", "Bedroom", "Car", "Office", "Outside", "Public place", "Public transport", "Quiet room", "Same place as before", "Shop", "Someone else's home", "Work", "Other"] }
     ]
   },
   {
     title: "During: Company",
     fields: [
-      { id: "duringCompany", label: "Who was with you during the worst part?", type: "radio", options: ["Alone", "Colleagues / classmates", "Family", "Friends", "On a call / online with someone", "Other", "Partner", "Strangers nearby"] }
+      { id: "duringCompany", label: "Who was with you during the worst part?", type: "checkbox", options: ["Alone", "Colleagues", "Family", "Friends", "Online with someone", "On a call with someone", "Partner", "Strangers nearby", "Other"] }
     ]
   },
   {
     title: "During: Physical Symptoms",
     fields: [
-      { id: "physicalSymptoms", label: "Physical symptoms during the episode", type: "checkbox", options: ["Blurry vision", "Chest pain / discomfort", "Chest tightness", "Chills", "Dizziness", "Dry mouth", "Feeling detached", "Feeling unreal / dreamlike", "Hot flushes", "Light-headedness", "Muscle tension", "Nausea", "None of these", "Numbness", "Pounding heartbeat", "Racing heart", "Shaking / trembling", "Shortness of breath", "Stomach cramps", "Sweating", "Tight throat", "Tingling", "Weak legs"] }
+      { id: "physicalSymptoms", label: "Physical symptoms during the episode", type: "checkbox", options: ["Blurry vision", "Chest discomfort", "Chest pain", "Chest tightness", "Chills", "Detached from body", "Dizziness", "Dreamlike feeling", "Dry mouth", "Hot flushes", "Light-headedness", "Muscle tension", "Nausea", "None of these", "Numbness", "Pounding heartbeat", "Racing heart", "Shaking", "Shortness of breath", "Stomach cramps", "Sweating", "Tight throat", "Tingling", "Trembling", "Weak legs", "Other"] }
     ]
   },
   {
     title: "During: Thoughts",
     fields: [
-      { id: "thoughts", label: "What thoughts did you have during the episode?", type: "checkbox", options: ["I am embarrassing myself", "I am not safe", "I am trapped", "I cannot handle this", "I felt blank or numb", "I might faint", "I might lose control", "I need help immediately", "I need reassurance", "I need to check my body / symptoms", "I need to escape", "My thoughts were racing", "None of these", "People will notice", "Something is seriously wrong with me", "This will not stop"] }
+      { id: "thoughts", label: "What thoughts did you have during the episode?", type: "checkbox", options: ["I am embarrassing myself", "I am not safe", "I am trapped", "I cannot handle this", "I felt blank or numb", "I might faint", "I might lose control", "I need help immediately", "I need reassurance", "I need to check my body", "I need to check symptoms", "I need to escape", "My thoughts were racing", "None of these", "People will notice", "Something is seriously wrong with me", "This will not stop"] }
     ]
   },
   {
@@ -82,22 +88,21 @@ const formSections = [
   {
     title: "During: Actions",
     fields: [
-      { id: "duringActions", label: "What did you do during the episode?", type: "checkbox", options: ["Asked for reassurance", "Called / texted someone", "Checked pulse / breathing / symptoms", "Cried", "Distracted myself", "Drank water", "Froze", "Googled symptoms", "Lay down", "Left the situation", "Other", "Sat down", "Stayed where I was", "Took prescribed medication", "Tried breathing exercises", "Tried to hide it", "Tried to stay but wanted to leave", "Used grounding techniques", "Walked around", "Went outside"] }
+      { id: "duringActions", label: "What did you do during the episode?", type: "checkbox", options: ["Asked for reassurance", "Called someone", "Checked body symptoms", "Checked breathing", "Checked pulse", "Cried", "Distracted myself", "Drank water", "Froze", "Googled symptoms", "Lay down", "Left the situation", "Sat down", "Stayed where I was", "Texted someone", "Took prescribed medication", "Tried breathing exercises", "Tried to hide it", "Tried to stay but wanted to leave", "Used grounding techniques", "Walked around", "Went outside", "Other"] }
     ]
   },
   {
     title: "After: Felt and Recovery",
     fields: [
       { id: "afterEffects", label: "After the panic attack, I felt:", type: "checkbox", options: ["Angry", "Confused", "Embarrassed", "Exhausted", "Fine quite quickly", "Hyper-alert", "Low mood", "Needed reassurance", "Needed sleep", "Needed to be alone", "Numb", "Other", "Physically drained", "Relieved", "Shaky", "Tearful", "Worried it would happen again"] },
-      { id: "recoveryTime", label: "How long did it take to feel normal again?", type: "radio", options: ["A few hours", "Less than an hour", "Minutes", "Next day or longer", "Not sure", "Rest of the day"] }
+      { id: "recoveryTime", label: "How long did it take to feel normal again?", type: "checkbox", options: ["A few hours", "Less than an hour", "Minutes", "Next day or longer", "Not sure", "Rest of the day"] }
     ]
   },
   {
     title: "After: Location and Actions",
     fields: [
-      { id: "afterLocation", label: "Where were you after the episode?", type: "radio", options: ["Bathroom", "Bedroom", "Car", "Home", "Other", "Outside", "Public place", "Quiet room", "Same place as before", "Someone else's home", "Work / school"] },
-      { id: "afterDestination", label: "Where did you go after the episode?", type: "radio", options: ["Bathroom", "Bedroom", "Car", "Home", "I continued the trip", "I stayed where I was", "Nowhere / not applicable", "Other", "Outside", "Quiet room", "Someone else's home", "Work / school"] },
-      { id: "afterActions", label: "What did you do after the episode?", type: "checkbox", options: ["Ate something", "Cancelled remaining plans", "Changed clothes", "Checked symptoms again", "Continued with plans", "Drank water", "Journaled / made notes", "Listened to music / podcast", "Looked up symptoms online", "Made tea / calming drink", "Other", "Sat alone", "Scrolled on phone", "Showered / washed face", "Stayed near someone", "Texted / called someone", "Told someone what happened", "Unpacked or finished the trip routine", "Watched TV / videos", "Went somewhere quiet", "Went to bed"] }
+      { id: "afterLocation", label: "Where were you after the episode?", type: "checkbox", options: ["Bathroom", "Bedroom", "Car", "Home", "Office", "Outside", "Public place", "Quiet room", "Same place as before", "Someone else's home", "Work", "Other"] },
+      { id: "afterActions", label: "What did you do after the episode?", type: "checkbox", options: ["Ate something", "Called someone", "Cancelled remaining plans", "Changed clothes", "Checked symptoms again", "Continued with plans", "Drank water", "Journaled", "Listened to music", "Listened to podcast", "Looked up symptoms online", "Made notes", "Made tea", "Made a calming drink", "Sat alone", "Scrolled on phone", "Showered", "Stayed near someone", "Texted someone", "Told someone what happened", "Unpacked", "Washed face", "Watched TV", "Watched videos", "Went somewhere quiet", "Went to bed", "Other"] }
     ]
   },
   {
@@ -194,6 +199,7 @@ function renderStep() {
 function renderField(field) {
   const wrapper = document.createElement("div");
   wrapper.className = "field";
+  const draftValue = normalizeDraftFieldValue(field, draft[field.id]);
 
   const label = document.createElement("label");
   label.className = "field-label";
@@ -242,7 +248,7 @@ function renderField(field) {
     const id = `${field.id}-${slugify(option)}`;
     const row = document.createElement("div");
     row.className = "choice-row";
-    const checked = field.type === "checkbox" ? draft[field.id].includes(option) : draft[field.id] === option;
+    const checked = field.type === "checkbox" ? draftValue.includes(option) : draftValue === option;
     row.innerHTML = `
       <label class="choice" for="${id}">
       <input id="${id}" name="${field.id}" type="${field.type}" value="${escapeAttribute(option)}"${checked ? " checked" : ""}>
@@ -332,6 +338,22 @@ function saveCurrentStep() {
   }
 }
 
+function normalizeDraftFieldValue(field, value) {
+  if (field.type !== "checkbox") {
+    return value ?? "";
+  }
+
+  if (Array.isArray(value)) {
+    return value;
+  }
+
+  if (value == null || value === "") {
+    return [];
+  }
+
+  return String(value).split(";").map((item) => item.trim()).filter(Boolean);
+}
+
 function saveEntry() {
   if (!draft.date) {
     showToast("Please add a date before submitting.");
@@ -401,11 +423,11 @@ function renderRecords() {
   for (const entry of entries) {
     const card = document.createElement("article");
     card.className = "record-card";
-    const tags = [entry.duration, entry.beforeLocation || entry.where, `Peak ${entry.intensity}/10`].filter(Boolean);
+    const tags = [formatEntryValue(entry.duration), formatEntryValue(entry.beforeLocation || entry.where), `Peak ${entry.intensity}/10`].filter(Boolean);
     card.innerHTML = `
       <div class="record-title">
         <span>${escapeHtml(formatDate(entry.date))}</span>
-        <span class="record-meta">${escapeHtml(entry.onset || "")}</span>
+        <span class="record-meta">${escapeHtml(formatEntryValue(entry.onset) || "")}</span>
       </div>
       <div class="record-meta">${escapeHtml(firstFilled(entry.thoughts, entry.emotions, entry.beforeState, entry.beforeAttack) || "No details selected")}</div>
       <div class="pill-row">${tags.map((tag) => `<span class="pill">${escapeHtml(tag)}</span>`).join("")}</div>
@@ -497,8 +519,8 @@ function exportNotes() {
       const parts = [
         `Date: ${formatDate(entry.date)}`,
         entry.time ? `Time: ${entry.time}` : "",
-        entry.beforeLocation ? `Before location: ${entry.beforeLocation}` : "",
-        entry.afterLocation ? `After location: ${entry.afterLocation}` : "",
+        entry.beforeLocation ? `Before location: ${formatEntryValue(entry.beforeLocation)}` : "",
+        entry.afterLocation ? `After location: ${formatEntryValue(entry.afterLocation)}` : "",
         "",
         entry.notes.trim()
       ].filter((part) => part !== "");
@@ -717,7 +739,7 @@ function uniqueOptions(options) {
       seen.add(key);
       return true;
     });
-  return unique.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
+  return unique.sort(sortOptions);
 }
 
 function loadEntries() {
@@ -775,10 +797,24 @@ function csvEscape(value) {
 
 function topValue(values) {
   const counts = new Map();
-  for (const value of values) {
+  for (const value of values.flatMap((item) => (Array.isArray(item) ? item : [item]))) {
     counts.set(value, (counts.get(value) || 0) + 1);
   }
   return Array.from(counts.entries()).sort((a, b) => b[1] - a[1])[0]?.[0] || "";
+}
+
+function formatEntryValue(value) {
+  return Array.isArray(value) ? value.join(", ") : value;
+}
+
+function sortOptions(a, b) {
+  if (a.toLowerCase() === "other") {
+    return 1;
+  }
+  if (b.toLowerCase() === "other") {
+    return -1;
+  }
+  return a.localeCompare(b, undefined, { sensitivity: "base" });
 }
 
 function firstFilled(...values) {
