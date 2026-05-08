@@ -19,5 +19,5 @@ The app stores entries in the phone browser's local storage. Use **Backup > Expo
 ## Data
 
 - CSV export is best for spreadsheets and graphs.
-- JSON export/import is best for full backup and restore.
+- JSON export/import is best for full backup and restore, including custom response options.
 - CSV import is supported for restoring exported CSV files.

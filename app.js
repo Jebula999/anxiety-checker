@@ -1,4 +1,5 @@
 const STORAGE_KEY = "anxiety-checker-entries-v1";
+const OPTIONS_KEY = "anxiety-checker-options-v1";
 const SCHEMA_VERSION = 1;
 
 const formSections = [
@@ -95,6 +96,8 @@ const formSections = [
 ];
 
 const fields = formSections.flatMap((section) => section.fields);
+let optionState = loadOptionState();
+applyOptionState();
 let entries = loadEntries();
 let draft = createEmptyDraft();
 let currentStep = 0;
@@ -221,17 +224,84 @@ function renderField(field) {
   grid.className = "choice-grid";
   for (const option of field.options) {
     const id = `${field.id}-${slugify(option)}`;
-    const choice = document.createElement("label");
-    choice.className = "choice";
+    const row = document.createElement("div");
+    row.className = "choice-row";
     const checked = field.type === "checkbox" ? draft[field.id].includes(option) : draft[field.id] === option;
-    choice.innerHTML = `
+    row.innerHTML = `
+      <label class="choice" for="${id}">
       <input id="${id}" name="${field.id}" type="${field.type}" value="${escapeAttribute(option)}"${checked ? " checked" : ""}>
       <span>${escapeHtml(option)}</span>
+      </label>
+      <button class="remove-option" type="button" data-field-id="${field.id}" data-option="${escapeAttribute(option)}" aria-label="Remove ${escapeAttribute(option)}" title="Remove option">x</button>
     `;
-    grid.append(choice);
+    grid.append(row);
   }
   wrapper.append(grid);
+
+  const addButton = document.createElement("button");
+  addButton.className = "add-option";
+  addButton.type = "button";
+  addButton.dataset.fieldId = field.id;
+  addButton.textContent = "Add +";
+  wrapper.append(addButton);
+
+  wrapper.querySelectorAll(".remove-option").forEach((button) => {
+    button.addEventListener("click", () => removeOption(button.dataset.fieldId, button.dataset.option));
+  });
+  addButton.addEventListener("click", () => addOption(field.id));
+
   return wrapper;
+}
+
+function addOption(fieldId) {
+  saveCurrentStep();
+  const field = fields.find((item) => item.id === fieldId);
+  if (!field || !field.options) {
+    return;
+  }
+
+  const value = prompt("Add a new response option:");
+  const option = value ? value.trim() : "";
+  if (!option) {
+    return;
+  }
+
+  if (field.options.some((existing) => existing.toLowerCase() === option.toLowerCase())) {
+    showToast("That option already exists.");
+    return;
+  }
+
+  field.options.push(option);
+  saveOptionState();
+  renderStep();
+  showToast("Option added.");
+}
+
+function removeOption(fieldId, option) {
+  saveCurrentStep();
+  const field = fields.find((item) => item.id === fieldId);
+  if (!field || !field.options) {
+    return;
+  }
+
+  if (field.options.length <= 1) {
+    showToast("Each question needs at least one option.");
+    return;
+  }
+
+  if (!confirm(`Remove "${option}" from future forms? Existing saved records will not be changed.`)) {
+    return;
+  }
+
+  field.options = field.options.filter((item) => item !== option);
+  if (Array.isArray(draft[fieldId])) {
+    draft[fieldId] = draft[fieldId].filter((item) => item !== option);
+  } else if (draft[fieldId] === option) {
+    draft[fieldId] = "";
+  }
+  saveOptionState();
+  renderStep();
+  showToast("Option removed.");
 }
 
 function saveCurrentStep() {
@@ -398,7 +468,13 @@ function exportJson() {
     return;
   }
 
-  downloadFile(`anxiety-checker-${todayStamp()}.json`, JSON.stringify(entries, null, 2), "application/json");
+  const backup = {
+    exportedAt: new Date().toISOString(),
+    schemaVersion: SCHEMA_VERSION,
+    entries,
+    options: optionState
+  };
+  downloadFile(`anxiety-checker-${todayStamp()}.json`, JSON.stringify(backup, null, 2), "application/json");
 }
 
 function importFile(event) {
@@ -411,11 +487,21 @@ function importFile(event) {
   reader.onload = () => {
     try {
       const imported = file.name.toLowerCase().endsWith(".json") ? JSON.parse(reader.result) : parseCsv(reader.result);
-      if (!Array.isArray(imported)) {
+      const importedEntries = Array.isArray(imported) ? imported : imported.entries;
+      if (!Array.isArray(importedEntries)) {
         throw new Error("Backup did not contain a list of entries.");
       }
 
-      const normalized = imported.map(normalizeImportedEntry);
+      if (imported && !Array.isArray(imported) && imported.options && typeof imported.options === "object") {
+        optionState = imported.options;
+        applyOptionState();
+        saveOptionState();
+        draft = createEmptyDraft();
+        currentStep = 0;
+        renderStep();
+      }
+
+      const normalized = importedEntries.map(normalizeImportedEntry);
       const existingIds = new Set(entries.map((entry) => entry.id));
       const merged = [...entries];
       for (const entry of normalized) {
@@ -498,6 +584,55 @@ function normalizeImportedEntry(entry) {
   }
 
   return normalized;
+}
+
+function loadOptionState() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(OPTIONS_KEY) || "{}");
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function applyOptionState() {
+  for (const field of fields) {
+    if (!field.options) {
+      continue;
+    }
+
+    const savedOptions = optionState[field.id];
+    if (Array.isArray(savedOptions) && savedOptions.length) {
+      field.options = uniqueOptions(savedOptions);
+    } else {
+      field.options = uniqueOptions(field.options);
+    }
+  }
+  saveOptionState();
+}
+
+function saveOptionState() {
+  optionState = {};
+  for (const field of fields) {
+    if (field.options) {
+      optionState[field.id] = uniqueOptions(field.options);
+    }
+  }
+  localStorage.setItem(OPTIONS_KEY, JSON.stringify(optionState));
+}
+
+function uniqueOptions(options) {
+  const seen = new Set();
+  return options
+    .map((option) => String(option).trim())
+    .filter((option) => {
+      const key = option.toLowerCase();
+      if (!option || seen.has(key)) {
+        return false;
+      }
+      seen.add(key);
+      return true;
+    });
 }
 
 function loadEntries() {

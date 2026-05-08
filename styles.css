@@ -253,6 +253,12 @@ textarea {
   gap: 8px;
 }
 
+.choice-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 44px;
+  gap: 6px;
+}
+
 .choice {
   display: flex;
   align-items: flex-start;
@@ -262,6 +268,16 @@ textarea {
   border-radius: var(--radius);
   padding: 10px;
   background: #fff;
+}
+
+.remove-option {
+  width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border-color: rgba(164, 48, 48, 0.18);
+  color: var(--danger);
+  background: #fff;
+  font-weight: 800;
 }
 
 .choice input {
@@ -292,6 +308,15 @@ input[type="range"] {
   color: #fff;
   background: var(--brand);
   font-weight: 800;
+}
+
+.add-option {
+  width: 100%;
+  margin-top: 10px;
+  border-style: dashed;
+  color: var(--brand-dark);
+  background: var(--surface-2);
+  font-weight: 760;
 }
 
 .sticky-actions {
