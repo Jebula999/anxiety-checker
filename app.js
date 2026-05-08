@@ -1,5 +1,5 @@
 const STORAGE_KEY = "anxiety-checker-entries-v1";
-const OPTIONS_KEY = "anxiety-checker-options-v4";
+const OPTIONS_KEY = "anxiety-checker-options-v5";
 const LEGACY_OPTIONS_KEYS = [];
 const SCHEMA_VERSION = 1;
 
@@ -16,7 +16,15 @@ const formSections = [
         options: ["Less than 5 minutes", "5-10 minutes", "10-20 minutes", "20-30 minutes", "30-60 minutes", "More than 1 hour", "Not sure"]
       },
       { id: "intensity", label: "Intensity at peak", type: "range", min: 0, max: 10, hint: "0 = none, 10 = unbearable" },
-      { id: "onset", label: "Did it feel sudden or gradual?", type: "checkbox", options: ["Built up slowly", "Came out of nowhere", "Not sure", "Started after a clear trigger"] }
+      { id: "distress", label: "How much distress did the episode cause?", type: "range", min: 0, max: 10, hint: "0 = none, 10 = extreme distress" },
+      { id: "impact", label: "How much did this episode affect what you did next?", type: "range", min: 0, max: 10, hint: "0 = no impact, 10 = completely changed what I did next" }
+    ]
+  },
+  {
+    title: "Episode Pattern",
+    fields: [
+      { id: "onset", label: "Did it feel sudden or gradual?", type: "checkbox", options: ["Built up slowly", "Came out of nowhere", "Not sure", "Started after a clear trigger"] },
+      { id: "expectedness", label: "Did this episode feel expected or unexpected?", type: "checkbox", options: ["Expected", "Partly expected", "Unexpected", "Not sure", "Other"] }
     ]
   },
   {
@@ -52,7 +60,7 @@ const formSections = [
   {
     title: "Worsening",
     fields: [
-      { id: "worseningFactors", label: "What seemed to make it worse?", type: "checkbox", options: ["Being unable to leave", "Bright lights", "Checking symptoms", "Chest sensation", "Conflict", "Crowds", "Dizziness", "Fast heartbeat", "Feeling hot", "Feeling judged", "Future worry", "Health worry", "I do not know", "Loud noise", "Money worry", "Relationship worry", "Remembering something stressful", "Shortness of breath", "Stomach discomfort", "Work worry", "Other"] }
+      { id: "worseningFactors", label: "What seemed to make it worse?", type: "checkbox", options: ["Being alone", "Being unable to leave", "Being watched", "Bright lights", "Checking symptoms", "Chest sensation", "Conflict", "Crowds", "Dizziness", "Driving", "Fast heartbeat", "Feeling hot", "Feeling judged", "Feeling trapped", "Future worry", "Googling symptoms", "Health worry", "Heat", "I do not know", "Loud noise", "Money worry", "Relationship worry", "Remembering something stressful", "Shortness of breath", "Stomach discomfort", "Trying to fight the feeling", "Work worry", "Other"] }
     ]
   },
   {
@@ -92,6 +100,12 @@ const formSections = [
     ]
   },
   {
+    title: "During: Body Checking",
+    fields: [
+      { id: "bodyChecking", label: "Did you check or monitor your body?", type: "checkbox", options: ["Asked for reassurance", "Checked breathing", "Checked chest sensation", "Checked dizziness", "Checked pulse", "Checked stomach", "Did not check", "Googled symptoms", "Looked in mirror", "Other"] }
+    ]
+  },
+  {
     title: "After: Felt and Recovery",
     fields: [
       { id: "afterEffects", label: "After the panic attack, I felt:", type: "checkbox", options: ["Angry", "Confused", "Embarrassed", "Exhausted", "Fine quite quickly", "Hyper-alert", "Low mood", "Needed reassurance", "Needed sleep", "Needed to be alone", "Numb", "Other", "Physically drained", "Relieved", "Shaky", "Tearful", "Worried it would happen again"] },
@@ -103,6 +117,18 @@ const formSections = [
     fields: [
       { id: "afterLocation", label: "Where were you after the episode?", type: "checkbox", options: ["Bathroom", "Bedroom", "Car", "Home", "Office", "Outside", "Public place", "Quiet room", "Same place as before", "Someone else's home", "Work", "Other"] },
       { id: "afterActions", label: "What did you do after the episode?", type: "checkbox", options: ["Ate something", "Called someone", "Cancelled remaining plans", "Changed clothes", "Checked symptoms again", "Continued with plans", "Drank water", "Journaled", "Listened to music", "Listened to podcast", "Looked up symptoms online", "Made notes", "Made tea", "Made a calming drink", "Sat alone", "Scrolled on phone", "Showered", "Stayed near someone", "Texted someone", "Told someone what happened", "Unpacked", "Washed face", "Watched TV", "Watched videos", "Went somewhere quiet", "Went to bed", "Other"] }
+    ]
+  },
+  {
+    title: "After: Avoidance",
+    fields: [
+      { id: "afterAvoidance", label: "Did you avoid anything because of this episode?", type: "checkbox", options: ["Being alone", "Being far from home", "Driving", "Eating", "Exercise", "Going back inside", "Nothing", "Physical sensations", "Social contact", "Work task", "Other"] }
+    ]
+  },
+  {
+    title: "After: What Helped",
+    fields: [
+      { id: "helpedReduceEpisode", label: "What helped reduce the episode?", type: "checkbox", options: ["Breathing slowly", "Distraction", "Drinking water", "Grounding", "Leaving the situation", "Lying down", "Medication", "Nothing obvious", "Sitting down", "Staying in the situation", "Talking to someone", "Time passing", "Other"] }
     ]
   },
   {
