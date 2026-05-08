@@ -1,5 +1,5 @@
 const STORAGE_KEY = "anxiety-checker-entries-v1";
-const OPTIONS_KEY = "anxiety-checker-options-v1";
+const OPTIONS_KEY = "anxiety-checker-options-v2";
 const SCHEMA_VERSION = 1;
 
 const formSections = [
@@ -48,12 +48,6 @@ const formSections = [
     ]
   },
   {
-    title: "Situational Triggers",
-    fields: [
-      { id: "situationalTriggers", label: "Do panic attacks happen more often in or around:", type: "checkbox", options: ["Crowds", "Queues", "Shops", "Restaurants", "Classrooms / meetings", "Work pressure", "Social events", "Conflict", "Being watched / judged", "Driving", "Public transport", "Being far from home", "Being alone", "Being with certain people", "Medical appointments", "Physical symptoms", "Exercise", "Sleep / bedtime", "Waking up", "After eating", "After caffeine", "During silence / downtime", "When I cannot leave easily", "When I feel responsible for something", "When plans change suddenly", "Other", "No clear situational trigger"] }
-    ]
-  },
-  {
     title: "Internal Triggers",
     fields: [
       { id: "internalTriggers", label: "Did any internal trigger seem to start or worsen the panic?", type: "checkbox", options: ["Fast heartbeat", "Feeling dizzy", "Feeling short of breath", "Stomach discomfort", "Feeling hot", "Feeling tired", "Feeling trapped", "Feeling judged", "Feeling uncertain", "Feeling like I disappointed someone", "Thinking about health", "Thinking about school / work", "Thinking about relationships", "Thinking about money / future", "Remembering something stressful", "Feeling like I have too much to do", "Feeling like I have no control", "Not knowing why I feel anxious", "Other", "No clear internal trigger"] }
@@ -66,30 +60,22 @@ const formSections = [
     ]
   },
   {
-    title: "Avoidance / Safety Behaviours",
+    title: "After the Episode",
     fields: [
-      { id: "avoidanceSafety", label: "After panic attacks, do I avoid or rely on anything?", type: "checkbox", options: ["Avoid going out alone", "Avoid crowds", "Avoid exercise", "Avoid caffeine", "Avoid driving", "Avoid public transport", "Avoid social events", "Avoid certain places", "Avoid conflict", "Avoid being far from home", "Avoid being without my phone", "Need to sit near exits", "Need to know where bathrooms are", "Need someone with me", "Need water with me", "Need medication with me", "Need to check my body often", "Need reassurance from others", "Cancel plans because I fear panic", "Leave situations early", "Other", "None of these"] }
-    ]
-  },
-  {
-    title: "Frequency and Pattern",
-    fields: [
-      { id: "recentFrequency", label: "How often have I been having panic attacks recently?", type: "radio", options: ["Daily", "Several times a week", "Weekly", "A few times a month", "Monthly", "Rarely", "Unclear"] },
-      { id: "timePattern", label: "Are they more likely at certain times?", type: "checkbox", options: ["Morning", "Afternoon", "Evening", "Night", "During sleep / waking up", "Weekdays", "Weekends", "Before specific events", "After stressful events", "No clear pattern", "Other"] },
-      { id: "worryAboutAnother", label: "Do I worry about having another panic attack?", type: "radio", options: ["Not really", "Sometimes", "Often", "Most days", "It affects my plans"] }
+      { id: "afterEpisodeActions", label: "What did you do after the episode?", type: "checkbox", options: ["Went home", "Returned to the car", "Sat somewhere quiet", "Lay down", "Showered or washed my face", "Changed clothes", "Ate something", "Drank water", "Made tea or another calming drink", "Took prescribed medication", "Texted or called someone", "Told someone what happened", "Stayed near someone", "Went to bed", "Rested on the couch", "Watched TV or videos", "Listened to music or a podcast", "Scrolled on my phone", "Journaled or made notes", "Checked my body or symptoms", "Looked up symptoms online", "Avoided talking about it", "Unpacked or finished the trip routine", "Cancelled the rest of my plans", "Continued with my plans", "Other", "None of these"] }
     ]
   },
   {
     title: "After-Effects",
     fields: [
-      { id: "afterEffects", label: "After the panic attack, I usually feel:", type: "checkbox", options: ["Exhausted", "Embarrassed", "Relieved", "Tearful", "Shaky", "Angry", "Low mood", "Numb", "Confused", "Hyper-alert", "Worried it will happen again", "Physically drained", "Need to sleep", "Need to be alone", "Need reassurance", "Fine quite quickly", "Other"] },
-      { id: "recoveryTime", label: "How long does it take to feel normal again?", type: "radio", options: ["Minutes", "Less than an hour", "A few hours", "Rest of the day", "Next day or longer"] }
+      { id: "afterEffects", label: "After the panic attack, I felt:", type: "checkbox", options: ["Exhausted", "Embarrassed", "Relieved", "Tearful", "Shaky", "Angry", "Low mood", "Numb", "Confused", "Hyper-alert", "Worried it would happen again", "Physically drained", "Like I needed to sleep", "Like I needed to be alone", "Like I needed reassurance", "Fine quite quickly", "Other"] },
+      { id: "recoveryTime", label: "How long did it take to feel normal again?", type: "radio", options: ["Minutes", "Less than an hour", "A few hours", "Rest of the day", "Next day or longer"] }
     ]
   },
   {
-    title: "Possible Themes for Therapy",
+    title: "Possible Themes From This Episode",
     fields: [
-      { id: "therapyThemes", label: "Which themes feel relevant?", type: "checkbox", options: ["Health anxiety / fear of body symptoms", "Fear of embarrassment", "Fear of losing control", "Fear of being trapped", "Fear of conflict", "Fear of disappointing people", "Fear of being judged", "Difficulty saying no", "Perfectionism", "Work / school pressure", "Social pressure", "Family stress", "Relationship stress", "Past stressful experiences", "Sleep issues", "Caffeine sensitivity", "Overstimulation", "General burnout", "Not knowing what I feel until it becomes physical", "I am scared of the panic itself", "Other", "Not sure"] },
+      { id: "therapyThemes", label: "Which themes seemed relevant to this episode?", type: "checkbox", options: ["Health anxiety / fear of body symptoms", "Fear of embarrassment", "Fear of losing control", "Fear of being trapped", "Fear of conflict", "Fear of disappointing people", "Fear of being judged", "Difficulty saying no", "Perfectionism", "Work / school pressure", "Social pressure", "Family stress", "Relationship stress", "Past stressful experiences", "Sleep issues", "Caffeine sensitivity", "Overstimulation", "General burnout", "Not knowing what I feel until it becomes physical", "Fear of the panic itself", "Other", "Not sure"] },
       { id: "notes", label: "Private notes", type: "textarea", hint: "Optional extra context." }
     ]
   }
@@ -101,6 +87,7 @@ applyOptionState();
 let entries = loadEntries();
 let draft = createEmptyDraft();
 let currentStep = 0;
+let editingEntryId = null;
 let deferredInstallPrompt = null;
 
 const form = document.querySelector("#episodeForm");
@@ -149,9 +136,10 @@ function renderStep() {
 
   const actions = document.createElement("div");
   actions.className = "sticky-actions wizard-actions";
+  const finalAction = editingEntryId ? "Update" : "Submit";
   actions.innerHTML = `
     <button class="secondary" id="backButton" type="button"${currentStep === 0 ? " disabled" : ""}>Back</button>
-    <button class="primary" id="nextButton" type="button">${currentStep === formSections.length - 1 ? "Submit" : "Next"}</button>
+    <button class="primary" id="nextButton" type="button">${currentStep === formSections.length - 1 ? finalAction : "Next"}</button>
   `;
   form.append(actions);
 
@@ -324,21 +312,30 @@ function saveEntry() {
     return;
   }
 
+  const existing = editingEntryId ? entries.find((item) => item.id === editingEntryId) : null;
   const entry = {
-    id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
-    createdAt: new Date().toISOString(),
+    id: existing?.id || (crypto.randomUUID ? crypto.randomUUID() : String(Date.now())),
+    createdAt: existing?.createdAt || new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
     schemaVersion: SCHEMA_VERSION,
     ...structuredClone(draft)
   };
 
-  entries.unshift(entry);
+  if (existing) {
+    entries = entries.map((item) => (item.id === existing.id ? entry : item));
+  } else {
+    entries.unshift(entry);
+  }
+
+  entries.sort((a, b) => String(b.date || b.createdAt).localeCompare(String(a.date || a.createdAt)));
   persistEntries();
   draft = createEmptyDraft();
+  editingEntryId = null;
   currentStep = 0;
   renderStep();
   renderRecords();
   switchView("records");
-  showToast("Entry saved.");
+  showToast(existing ? "Entry updated." : "Entry saved.");
 }
 
 function renderRecords() {
@@ -385,6 +382,7 @@ function renderRecords() {
       <div class="record-meta">${escapeHtml(firstFilled(entry.thoughts, entry.emotions, entry.beforeAttack) || "No details selected")}</div>
       <div class="pill-row">${tags.map((tag) => `<span class="pill">${escapeHtml(tag)}</span>`).join("")}</div>
       <div class="record-actions">
+        <button type="button" data-action="edit" data-id="${entry.id}">Edit</button>
         <button type="button" data-action="duplicate" data-id="${entry.id}">Duplicate</button>
         <button type="button" data-action="delete" data-id="${entry.id}">Delete</button>
       </div>
@@ -411,10 +409,11 @@ function renderRecords() {
         for (const field of fields) {
           draft[field.id] = structuredClone(source[field.id] ?? draft[field.id]);
         }
+        editingEntryId = button.dataset.action === "edit" ? source.id : null;
         currentStep = 0;
         renderStep();
         switchView("entry");
-        showToast("Entry copied into the form.");
+        showToast(button.dataset.action === "edit" ? "Editing saved entry." : "Entry copied into the form.");
       }
     });
   });
@@ -615,7 +614,8 @@ function saveOptionState() {
   optionState = {};
   for (const field of fields) {
     if (field.options) {
-      optionState[field.id] = uniqueOptions(field.options);
+      field.options = uniqueOptions(field.options);
+      optionState[field.id] = field.options;
     }
   }
   localStorage.setItem(OPTIONS_KEY, JSON.stringify(optionState));
@@ -623,7 +623,7 @@ function saveOptionState() {
 
 function uniqueOptions(options) {
   const seen = new Set();
-  return options
+  const unique = options
     .map((option) => String(option).trim())
     .filter((option) => {
       const key = option.toLowerCase();
@@ -633,6 +633,7 @@ function uniqueOptions(options) {
       seen.add(key);
       return true;
     });
+  return unique.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
 }
 
 function loadEntries() {
