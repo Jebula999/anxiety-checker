@@ -1,5 +1,6 @@
 const STORAGE_KEY = "anxiety-checker-entries-v1";
 const OPTIONS_KEY = "anxiety-checker-options-v2";
+const LEGACY_OPTIONS_KEYS = ["anxiety-checker-options-v1"];
 const SCHEMA_VERSION = 1;
 
 const formSections = [
@@ -462,11 +463,6 @@ function exportCsv() {
 }
 
 function exportJson() {
-  if (!entries.length) {
-    showToast("No entries to export.");
-    return;
-  }
-
   const backup = {
     exportedAt: new Date().toISOString(),
     schemaVersion: SCHEMA_VERSION,
@@ -588,10 +584,47 @@ function normalizeImportedEntry(entry) {
 function loadOptionState() {
   try {
     const parsed = JSON.parse(localStorage.getItem(OPTIONS_KEY) || "{}");
-    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+    const current = parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+    return mergeLegacyOptionState(current);
   } catch {
-    return {};
+    return mergeLegacyOptionState({});
   }
+}
+
+function mergeLegacyOptionState(current) {
+  const merged = { ...current };
+  let changed = false;
+
+  for (const key of LEGACY_OPTIONS_KEYS) {
+    try {
+      const legacy = JSON.parse(localStorage.getItem(key) || "{}");
+      if (!legacy || typeof legacy !== "object" || Array.isArray(legacy)) {
+        continue;
+      }
+
+      for (const field of fields) {
+        const legacyOptions = legacy[field.id];
+        if (!Array.isArray(legacyOptions) || !legacyOptions.length) {
+          continue;
+        }
+
+        const currentOptions = Array.isArray(merged[field.id]) ? merged[field.id] : field.options || [];
+        const nextOptions = uniqueOptions([...currentOptions, ...legacyOptions]);
+        if (nextOptions.length !== currentOptions.length) {
+          merged[field.id] = nextOptions;
+          changed = true;
+        }
+      }
+    } catch {
+      // Ignore malformed legacy customization data.
+    }
+  }
+
+  if (changed) {
+    localStorage.setItem(OPTIONS_KEY, JSON.stringify(merged));
+  }
+
+  return merged;
 }
 
 function applyOptionState() {
