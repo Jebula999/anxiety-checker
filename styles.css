@@ -231,6 +231,7 @@ main {
 }
 
 input[type="date"],
+input[type="time"],
 input[type="number"],
 select,
 textarea {

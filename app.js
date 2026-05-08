@@ -1,13 +1,14 @@
 const STORAGE_KEY = "anxiety-checker-entries-v1";
-const OPTIONS_KEY = "anxiety-checker-options-v2";
-const LEGACY_OPTIONS_KEYS = ["anxiety-checker-options-v1"];
+const OPTIONS_KEY = "anxiety-checker-options-v3";
+const LEGACY_OPTIONS_KEYS = ["anxiety-checker-options-v2", "anxiety-checker-options-v1"];
 const SCHEMA_VERSION = 1;
 
 const formSections = [
   {
-    title: "Basic Details",
+    title: "When It Happened",
     fields: [
       { id: "date", label: "Date of panic attack", type: "date", required: true },
+      { id: "time", label: "Approximate time", type: "time" },
       {
         id: "duration",
         label: "Approximate duration",
@@ -15,74 +16,100 @@ const formSections = [
         options: ["Less than 5 minutes", "5-10 minutes", "10-20 minutes", "20-30 minutes", "30-60 minutes", "More than 1 hour", "Not sure"]
       },
       { id: "intensity", label: "Intensity at peak", type: "range", min: 0, max: 10, hint: "0 = none, 10 = unbearable" },
-      { id: "where", label: "Where was I?", type: "radio", options: ["Home", "Work / school", "Car / transport", "Shop / public place", "Social setting", "Bed / trying to sleep", "Online / phone call", "Other"] },
-      { id: "alone", label: "Was I alone?", type: "radio", options: ["Alone", "With family", "With friends", "With colleagues / classmates", "Around strangers", "Other"] },
-      { id: "onset", label: "Did it feel sudden or gradual?", type: "radio", options: ["Came out of nowhere", "Built up slowly", "Started after a clear trigger", "Not sure"] }
+      { id: "onset", label: "Did it feel sudden or gradual?", type: "radio", options: ["Built up slowly", "Came out of nowhere", "Not sure", "Started after a clear trigger"] }
     ]
   },
   {
-    title: "Physical Symptoms",
+    title: "Before: Location",
     fields: [
-      { id: "heartChestSymptoms", label: "Heart / chest symptoms", type: "checkbox", options: ["Racing heart", "Pounding heartbeat", "Chest tightness", "Chest pain / discomfort", "Feeling like my heart skipped beats", "Pressure in chest", "None of these"] },
-      { id: "breathingSymptoms", label: "Breathing symptoms", type: "checkbox", options: ["Shortness of breath", "Breathing too fast", "Feeling like I could not get enough air", "Choking sensation", "Tight throat", "Heavy sighing / needing deep breaths", "None of these"] },
-      { id: "headBalanceSymptoms", label: "Head / balance symptoms", type: "checkbox", options: ["Dizziness", "Light-headedness", "Feeling faint", "Blurry vision", "Head pressure", "Headache", "Feeling detached from my body", "Feeling like the world was unreal or dreamlike", "None of these"] },
-      { id: "stomachSymptoms", label: "Stomach / digestion symptoms", type: "checkbox", options: ["Nausea", "Stomach cramps", "Urgent need for toilet", "Loss of appetite", "Dry mouth", "Acid reflux / burning sensation", "Tight stomach", "None of these"] },
-      { id: "bodySensations", label: "Body sensations", type: "checkbox", options: ["Shaking", "Trembling", "Sweating", "Hot flushes", "Chills", "Tingling", "Numbness", "Muscle tension", "Weak legs", "Restlessness", "Feeling frozen / unable to move normally", "None of these"] }
+      { id: "beforeLocation", label: "Where were you before the episode started?", type: "radio", options: ["Bed / trying to sleep", "Car", "Home", "Medical setting", "Online / phone call", "Other", "Outdoors", "Public transport", "Restaurant / cafe", "Shop / mall", "Social setting", "Work / school"] }
     ]
   },
   {
-    title: "Thoughts During the Attack",
+    title: "Before: Activity",
     fields: [
-      { id: "thoughts", label: "What thoughts did I have during the panic attack?", type: "checkbox", options: ["Something is seriously wrong with me", "I might faint", "I might lose control", "I need to escape", "People will notice", "I am embarrassing myself", "I cannot handle this", "This will not stop", "I am trapped", "I am not safe", "I need someone to help me immediately", "I need to check my body / symptoms", "I need reassurance", "I do not know what triggered this", "My thoughts were racing too fast to identify", "I felt blank or numb rather than panicked", "None of these"] }
+      { id: "beforeActivity", label: "What were you doing before it started?", type: "checkbox", options: ["Doing chores", "Driving", "Eating", "Exercising", "In a meeting / class", "Nothing obvious", "Other", "Resting", "Scrolling online", "Shopping", "Talking to someone", "Travelling", "Trying to sleep", "Waiting for something", "Waking up", "Working / studying"] }
     ]
   },
   {
-    title: "Emotions",
+    title: "Before: Company",
     fields: [
-      { id: "emotions", label: "What emotions were present?", type: "checkbox", options: ["Fear", "Dread", "Shame", "Embarrassment", "Frustration", "Anger", "Sadness", "Helplessness", "Confusion", "Disconnection", "Overwhelm", "Irritability", "Guilt", "Numbness", "Nothing / no clear emotion", "Other"] }
+      { id: "beforeCompany", label: "Who were you with when it started?", type: "radio", options: ["Alone", "Colleagues / classmates", "Family", "Friends", "On a call / online with someone", "Other", "Partner", "Strangers nearby"] }
     ]
   },
   {
-    title: "What Was Happening Before",
+    title: "Before: State",
     fields: [
-      { id: "beforeAttack", label: "In the 30 minutes before the attack, was I:", type: "checkbox", options: ["In an argument", "Thinking about something stressful", "Feeling physically unwell", "Tired", "Hungry", "Dehydrated", "Overstimulated by noise / lights / crowds", "Under pressure", "Running late", "Socially uncomfortable", "Feeling trapped or unable to leave", "Doing something important", "Waiting for something", "Trying to sleep", "Waking up", "Scrolling online", "After caffeine / energy drinks", "After intense exercise", "After little sleep", "After a major change or stressful event", "Nothing obvious was happening", "Other"] }
+      { id: "beforeState", label: "What was your state before it started?", type: "checkbox", options: ["After caffeine / energy drink", "After little sleep", "Calm", "Dehydrated", "Hungry", "Irritable", "Numb / disconnected", "Other", "Overstimulated", "Physically unwell", "Running late", "Sad / low", "Socially uncomfortable", "Stressed", "Tired", "Trapped / unable to leave", "Under pressure"] }
     ]
   },
   {
-    title: "Internal Triggers",
+    title: "Start or Worsening",
     fields: [
-      { id: "internalTriggers", label: "Did any internal trigger seem to start or worsen the panic?", type: "checkbox", options: ["Fast heartbeat", "Feeling dizzy", "Feeling short of breath", "Stomach discomfort", "Feeling hot", "Feeling tired", "Feeling trapped", "Feeling judged", "Feeling uncertain", "Feeling like I disappointed someone", "Thinking about health", "Thinking about school / work", "Thinking about relationships", "Thinking about money / future", "Remembering something stressful", "Feeling like I have too much to do", "Feeling like I have no control", "Not knowing why I feel anxious", "Other", "No clear internal trigger"] }
+      { id: "episodeTriggers", label: "What seemed to start or worsen it?", type: "checkbox", options: ["Being unable to leave", "Chest sensation", "Conflict", "Crowds / noise / lights", "Dizziness", "Fast heartbeat", "Feeling hot", "Feeling judged", "Health worry", "I do not know", "Money / future worry", "Other", "Relationship worry", "Remembering something stressful", "Shortness of breath", "Stomach discomfort", "Work / school worry"] }
     ]
   },
   {
-    title: "What I Did During the Attack",
+    title: "During: Location",
     fields: [
-      { id: "duringAttackActions", label: "What did I do during the panic attack?", type: "checkbox", options: ["Left the situation", "Tried to stay but wanted to leave", "Asked someone for reassurance", "Called / texted someone", "Checked my pulse / breathing / body", "Googled symptoms", "Sat or lay down", "Walked around", "Froze", "Cried", "Tried breathing exercises", "Used grounding techniques", "Distracted myself with phone / TV / music", "Drank water", "Went outside", "Avoided talking", "Talked a lot", "Tried to hide it from others", "Took prescribed medication", "Other"] }
+      { id: "duringLocation", label: "Where were you during the worst part?", type: "radio", options: ["Bathroom", "Car", "Other", "Outside", "Public transport", "Quiet room", "Same place as before", "Shop / public place", "Someone else's home", "Work / school area"] }
     ]
   },
   {
-    title: "After the Episode",
+    title: "During: Company",
     fields: [
-      { id: "afterEpisodeActions", label: "What did you do after the episode?", type: "checkbox", options: ["Went home", "Returned to the car", "Sat somewhere quiet", "Lay down", "Showered or washed my face", "Changed clothes", "Ate something", "Drank water", "Made tea or another calming drink", "Took prescribed medication", "Texted or called someone", "Told someone what happened", "Stayed near someone", "Went to bed", "Rested on the couch", "Watched TV or videos", "Listened to music or a podcast", "Scrolled on my phone", "Journaled or made notes", "Checked my body or symptoms", "Looked up symptoms online", "Avoided talking about it", "Unpacked or finished the trip routine", "Cancelled the rest of my plans", "Continued with my plans", "Other", "None of these"] }
+      { id: "duringCompany", label: "Who was with you during the worst part?", type: "radio", options: ["Alone", "Colleagues / classmates", "Family", "Friends", "On a call / online with someone", "Other", "Partner", "Strangers nearby"] }
     ]
   },
   {
-    title: "After-Effects",
+    title: "During: Physical Symptoms",
     fields: [
-      { id: "afterEffects", label: "After the panic attack, I felt:", type: "checkbox", options: ["Exhausted", "Embarrassed", "Relieved", "Tearful", "Shaky", "Angry", "Low mood", "Numb", "Confused", "Hyper-alert", "Worried it would happen again", "Physically drained", "Like I needed to sleep", "Like I needed to be alone", "Like I needed reassurance", "Fine quite quickly", "Other"] },
-      { id: "recoveryTime", label: "How long did it take to feel normal again?", type: "radio", options: ["Minutes", "Less than an hour", "A few hours", "Rest of the day", "Next day or longer"] }
+      { id: "physicalSymptoms", label: "Physical symptoms during the episode", type: "checkbox", options: ["Blurry vision", "Chest pain / discomfort", "Chest tightness", "Chills", "Dizziness", "Dry mouth", "Feeling detached", "Feeling unreal / dreamlike", "Hot flushes", "Light-headedness", "Muscle tension", "Nausea", "None of these", "Numbness", "Pounding heartbeat", "Racing heart", "Shaking / trembling", "Shortness of breath", "Stomach cramps", "Sweating", "Tight throat", "Tingling", "Weak legs"] }
     ]
   },
   {
-    title: "Possible Themes From This Episode",
+    title: "During: Thoughts",
     fields: [
-      { id: "therapyThemes", label: "Which themes seemed relevant to this episode?", type: "checkbox", options: ["Health anxiety / fear of body symptoms", "Fear of embarrassment", "Fear of losing control", "Fear of being trapped", "Fear of conflict", "Fear of disappointing people", "Fear of being judged", "Difficulty saying no", "Perfectionism", "Work / school pressure", "Social pressure", "Family stress", "Relationship stress", "Past stressful experiences", "Sleep issues", "Caffeine sensitivity", "Overstimulation", "General burnout", "Not knowing what I feel until it becomes physical", "Fear of the panic itself", "Other", "Not sure"] },
-      { id: "notes", label: "Private notes", type: "textarea", hint: "Optional extra context." }
+      { id: "thoughts", label: "What thoughts did you have during the episode?", type: "checkbox", options: ["I am embarrassing myself", "I am not safe", "I am trapped", "I cannot handle this", "I felt blank or numb", "I might faint", "I might lose control", "I need help immediately", "I need reassurance", "I need to check my body / symptoms", "I need to escape", "My thoughts were racing", "None of these", "People will notice", "Something is seriously wrong with me", "This will not stop"] }
+    ]
+  },
+  {
+    title: "During: Emotions",
+    fields: [
+      { id: "emotions", label: "What emotions were present during the episode?", type: "checkbox", options: ["Anger", "Confusion", "Disconnection", "Dread", "Embarrassment", "Fear", "Frustration", "Guilt", "Helplessness", "Irritability", "No clear emotion", "Numbness", "Other", "Overwhelm", "Sadness", "Shame"] }
+    ]
+  },
+  {
+    title: "During: Actions",
+    fields: [
+      { id: "duringActions", label: "What did you do during the episode?", type: "checkbox", options: ["Asked for reassurance", "Called / texted someone", "Checked pulse / breathing / symptoms", "Cried", "Distracted myself", "Drank water", "Froze", "Googled symptoms", "Lay down", "Left the situation", "Other", "Sat down", "Stayed where I was", "Took prescribed medication", "Tried breathing exercises", "Tried to hide it", "Tried to stay but wanted to leave", "Used grounding techniques", "Walked around", "Went outside"] }
+    ]
+  },
+  {
+    title: "After: Felt and Recovery",
+    fields: [
+      { id: "afterEffects", label: "After the panic attack, I felt:", type: "checkbox", options: ["Angry", "Confused", "Embarrassed", "Exhausted", "Fine quite quickly", "Hyper-alert", "Low mood", "Needed reassurance", "Needed sleep", "Needed to be alone", "Numb", "Other", "Physically drained", "Relieved", "Shaky", "Tearful", "Worried it would happen again"] },
+      { id: "recoveryTime", label: "How long did it take to feel normal again?", type: "radio", options: ["A few hours", "Less than an hour", "Minutes", "Next day or longer", "Not sure", "Rest of the day"] }
+    ]
+  },
+  {
+    title: "After: Location and Actions",
+    fields: [
+      { id: "afterLocation", label: "Where were you after the episode?", type: "radio", options: ["Bathroom", "Bedroom", "Car", "Home", "Other", "Outside", "Public place", "Quiet room", "Same place as before", "Someone else's home", "Work / school"] },
+      { id: "afterDestination", label: "Where did you go after the episode?", type: "radio", options: ["Bathroom", "Bedroom", "Car", "Home", "I continued the trip", "I stayed where I was", "Nowhere / not applicable", "Other", "Outside", "Quiet room", "Someone else's home", "Work / school"] },
+      { id: "afterActions", label: "What did you do after the episode?", type: "checkbox", options: ["Ate something", "Cancelled remaining plans", "Changed clothes", "Checked symptoms again", "Continued with plans", "Drank water", "Journaled / made notes", "Listened to music / podcast", "Looked up symptoms online", "Made tea / calming drink", "Other", "Sat alone", "Scrolled on phone", "Showered / washed face", "Stayed near someone", "Texted / called someone", "Told someone what happened", "Unpacked or finished the trip routine", "Watched TV / videos", "Went somewhere quiet", "Went to bed"] }
+    ]
+  },
+  {
+    title: "Notes",
+    fields: [
+      { id: "notes", label: "Notes for therapy", type: "textarea", notesOnly: true, hint: "Optional. These are excluded from CSV and available through Export Notes." }
     ]
   }
 ];
 
 const fields = formSections.flatMap((section) => section.fields);
+const questionnaireFields = fields.filter((field) => !field.notesOnly);
 let optionState = loadOptionState();
 applyOptionState();
 let entries = loadEntries();
@@ -180,13 +207,13 @@ function renderField(field) {
     wrapper.append(hint);
   }
 
-  if (field.type === "date" || field.type === "textarea") {
+  if (field.type === "date" || field.type === "time" || field.type === "textarea") {
     const input = document.createElement(field.type === "textarea" ? "textarea" : "input");
     input.id = field.id;
     input.name = field.id;
     input.value = draft[field.id] || "";
-    if (field.type === "date") {
-      input.type = "date";
+    if (field.type === "date" || field.type === "time") {
+      input.type = field.type;
     }
     if (field.required) {
       input.required = true;
@@ -357,7 +384,7 @@ function renderRecords() {
   const intensities = entries.map((entry) => Number(entry.intensity)).filter((value) => !Number.isNaN(value));
   const averageIntensity = intensities.length ? (intensities.reduce((sum, value) => sum + value, 0) / intensities.length).toFixed(1) : "-";
   const latest = entries[0];
-  const topWhere = topValue(entries.map((entry) => entry.where).filter(Boolean));
+  const topWhere = topValue(entries.map((entry) => entry.beforeLocation || entry.where).filter(Boolean));
 
   [
     ["Total", entries.length],
@@ -374,13 +401,13 @@ function renderRecords() {
   for (const entry of entries) {
     const card = document.createElement("article");
     card.className = "record-card";
-    const tags = [entry.duration, entry.where, `Peak ${entry.intensity}/10`].filter(Boolean);
+    const tags = [entry.duration, entry.beforeLocation || entry.where, `Peak ${entry.intensity}/10`].filter(Boolean);
     card.innerHTML = `
       <div class="record-title">
         <span>${escapeHtml(formatDate(entry.date))}</span>
         <span class="record-meta">${escapeHtml(entry.onset || "")}</span>
       </div>
-      <div class="record-meta">${escapeHtml(firstFilled(entry.thoughts, entry.emotions, entry.beforeAttack) || "No details selected")}</div>
+      <div class="record-meta">${escapeHtml(firstFilled(entry.thoughts, entry.emotions, entry.beforeState, entry.beforeAttack) || "No details selected")}</div>
       <div class="pill-row">${tags.map((tag) => `<span class="pill">${escapeHtml(tag)}</span>`).join("")}</div>
       <div class="record-actions">
         <button type="button" data-action="edit" data-id="${entry.id}">Edit</button>
@@ -435,6 +462,7 @@ function switchView(view) {
 
 function bindBackup() {
   document.querySelector("#exportCsvButton").addEventListener("click", exportCsv);
+  document.querySelector("#exportNotesButton").addEventListener("click", exportNotes);
   document.querySelector("#exportJsonButton").addEventListener("click", exportJson);
   document.querySelector("#importFile").addEventListener("change", importFile);
   document.querySelector("#clearDataButton").addEventListener("click", () => {
@@ -457,9 +485,32 @@ function exportCsv() {
     return;
   }
 
-  const headers = ["id", "createdAt", "schemaVersion", ...fields.map((field) => field.id)];
+  const headers = ["id", "createdAt", "updatedAt", "schemaVersion", ...questionnaireFields.map((field) => field.id)];
   const rows = entries.map((entry) => headers.map((header) => csvEscape(Array.isArray(entry[header]) ? entry[header].join("; ") : entry[header] ?? "")).join(","));
   downloadFile(`anxiety-checker-${todayStamp()}.csv`, [headers.join(","), ...rows].join("\n"), "text/csv");
+}
+
+function exportNotes() {
+  const notes = entries
+    .filter((entry) => String(entry.notes || "").trim())
+    .map((entry) => {
+      const parts = [
+        `Date: ${formatDate(entry.date)}`,
+        entry.time ? `Time: ${entry.time}` : "",
+        entry.beforeLocation ? `Before location: ${entry.beforeLocation}` : "",
+        entry.afterLocation ? `After location: ${entry.afterLocation}` : "",
+        "",
+        entry.notes.trim()
+      ].filter((part) => part !== "");
+      return parts.join("\n");
+    });
+
+  if (!notes.length) {
+    showToast("No notes to export.");
+    return;
+  }
+
+  downloadFile(`anxiety-checker-notes-${todayStamp()}.txt`, notes.join("\n\n---\n\n"), "text/plain");
 }
 
 function exportJson() {

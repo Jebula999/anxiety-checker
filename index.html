@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#146c5f">
-    <meta name="description" content="A local-first panic attack log for tracking patterns to discuss in therapy.">
+    <meta name="description" content="A local-first panic attack log for recording before, during, and after episode details.">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="icons/icon-192.png">
     <link rel="stylesheet" href="styles.css">
@@ -31,7 +31,7 @@
       <section class="view is-active" id="entryView" aria-labelledby="entryTitle">
         <div class="section-head">
           <h2 id="entryTitle">New episode</h2>
-          <p>This is for tracking patterns to discuss in therapy, not for self-diagnosis.</p>
+          <p>This is for recording one episode to discuss in therapy, not for self-diagnosis.</p>
         </div>
         <form id="episodeForm" autocomplete="off"></form>
       </section>
@@ -53,6 +53,7 @@
 
         <div class="tool-panel">
           <button class="primary" id="exportCsvButton" type="button">Export CSV</button>
+          <button id="exportNotesButton" type="button">Export Notes</button>
           <button id="exportJsonButton" type="button">Export JSON</button>
           <label class="file-action">
             Import CSV or JSON
