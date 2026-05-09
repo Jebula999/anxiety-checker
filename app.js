@@ -1,5 +1,5 @@
 const STORAGE_KEY = "anxiety-checker-entries-v1";
-const OPTIONS_KEY = "anxiety-checker-options-v7";
+const OPTIONS_KEY = "anxiety-checker-options-v8";
 const LEGACY_OPTIONS_KEYS = [];
 const SCHEMA_VERSION = 1;
 
@@ -24,9 +24,9 @@ const formSections = [
   {
     title: "Activity",
     fields: [
-      { id: "beforeActivity", label: "What Were You Doing Before?", type: "checkbox", options: ["Asked for Reassurance", "Avoided Talking", "Called or Texted Someone", "Checked My Body", "Cleaning", "Cried", "Distracted Myself", "Drank Water", "Driving", "Eating", "Froze", "Gaming", "Getting Ready", "Googled Symptoms", "In the Bathroom", "Left the Situation", "Relaxing", "Shopping", "Showering", "Sitting or Lying Down", "Sleeping", "Socialising", "Stayed but Wanted to Leave", "Talked a Lot", "Took Prescribed Medication", "Travelling", "Tried Breathing Exercises", "Tried to Hide It", "Used Grounding Techniques", "Walking", "Went Outside", "Working", "Other"] },
+      { id: "beforeActivity", label: "What Were You Doing Before?", type: "checkbox", options: ["Cleaning", "Drank Water", "Driving", "Eating", "Gaming", "Getting Ready", "In the Bathroom", "Relaxing", "Shopping", "Showering", "Sitting or Lying Down", "Sleeping", "Socialising", "Travelling", "Walking", "Went Outside", "Working", "Other"] },
       { id: "duringActivity", label: "What Were You Doing During?", type: "checkbox", options: ["Asked for Reassurance", "Avoided Talking", "Called or Texted Someone", "Checked My Body", "Cleaning", "Cried", "Distracted Myself", "Drank Water", "Driving", "Eating", "Froze", "Gaming", "Getting Ready", "Googled Symptoms", "In the Bathroom", "Left the Situation", "Relaxing", "Shopping", "Showering", "Sitting or Lying Down", "Sleeping", "Socialising", "Stayed but Wanted to Leave", "Talked a Lot", "Took Prescribed Medication", "Travelling", "Tried Breathing Exercises", "Tried to Hide It", "Used Grounding Techniques", "Walking", "Went Outside", "Working", "Other"] },
-      { id: "afterActivity", label: "What Were You Doing After?", type: "checkbox", options: ["Asked for Reassurance", "Avoided Talking", "Called or Texted Someone", "Checked My Body", "Cleaning", "Cried", "Distracted Myself", "Drank Water", "Driving", "Eating", "Froze", "Gaming", "Getting Ready", "Googled Symptoms", "In the Bathroom", "Left the Situation", "Relaxing", "Shopping", "Showering", "Sitting or Lying Down", "Sleeping", "Socialising", "Stayed but Wanted to Leave", "Talked a Lot", "Took Prescribed Medication", "Travelling", "Tried Breathing Exercises", "Tried to Hide It", "Used Grounding Techniques", "Walking", "Went Outside", "Working", "Other"] }
+      { id: "afterActivity", label: "What Were You Doing After?", type: "checkbox", options: ["Avoided Talking", "Checked My Body", "Cleaning", "Distracted Myself", "Drank Water", "Driving", "Eating", "Gaming", "Googled Symptoms", "In the Bathroom", "Left the Situation", "Relaxing", "Shopping", "Showering", "Sitting or Lying Down", "Sleeping", "Socialising", "Stayed but Wanted to Leave", "Talked a Lot", "Took Prescribed Medication", "Travelling", "Tried Breathing Exercises", "Walking", "Went Outside", "Working", "Other"] }
     ]
   },
   {

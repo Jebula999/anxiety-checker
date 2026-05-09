@@ -67,35 +67,20 @@ Checkboxes
 
 ## What Were You Doing Before?
 Checkboxes
-- Asked for Reassurance
-- Avoided Talking
-- Called or Texted Someone
-- Checked My Body
 - Cleaning
-- Cried
-- Distracted Myself
 - Drank Water
 - Driving
 - Eating
-- Froze
 - Gaming
 - Getting Ready
-- Googled Symptoms
 - In the Bathroom
-- Left the Situation
 - Relaxing
 - Shopping
 - Showering
 - Sitting or Lying Down
 - Sleeping
 - Socialising
-- Stayed but Wanted to Leave
-- Talked a Lot
-- Took Prescribed Medication
 - Travelling
-- Tried Breathing Exercises
-- Tried to Hide It
-- Used Grounding Techniques
 - Walking
 - Went Outside
 - Working
@@ -139,19 +124,14 @@ Checkboxes
 
 ## What Were You Doing After?
 Checkboxes
-- Asked for Reassurance
 - Avoided Talking
-- Called or Texted Someone
 - Checked My Body
 - Cleaning
-- Cried
 - Distracted Myself
 - Drank Water
 - Driving
 - Eating
-- Froze
 - Gaming
-- Getting Ready
 - Googled Symptoms
 - In the Bathroom
 - Left the Situation
@@ -166,8 +146,6 @@ Checkboxes
 - Took Prescribed Medication
 - Travelling
 - Tried Breathing Exercises
-- Tried to Hide It
-- Used Grounding Techniques
 - Walking
 - Went Outside
 - Working
