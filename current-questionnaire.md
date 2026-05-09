@@ -1,6 +1,7 @@
 # Anxiety Checker Current Questionnaire
 
 This is a snapshot of the current in-app questionnaire.
+Notes are stored separately from CSV exports and can be exported with Export Notes.
 
 ---
 
@@ -662,3 +663,10 @@ Checkboxes
 - Social Pressure
 - Work Pressure
 - Other
+
+---
+
+# 14. Notes
+
+## Notes for Therapy
+Free Text Notes, Exported Separately From CSV

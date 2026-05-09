@@ -104,11 +104,17 @@ const formSections = [
     fields: [
       { id: "themes", label: "Which Themes Feel Relevant?", type: "checkbox", options: ["Burnout", "Caffeine Sensitivity", "Difficulty Saying No", "Emotions Showing Up Physically", "Family Stress", "Fear of Being Judged", "Fear of Being Trapped", "Fear of Body Symptoms", "Fear of Conflict", "Fear of Disappointing People", "Fear of Embarrassment", "Fear of Losing Control", "Fear of Panic Itself", "Overstimulation", "Past Stressful Experiences", "Perfectionism", "Relationship Stress", "Sleep Issues", "Social Pressure", "Work Pressure", "Other"] }
     ]
+  },
+  {
+    title: "Notes",
+    fields: [
+      { id: "notes", label: "Notes for Therapy", type: "textarea", notesOnly: true, hint: "Optional. These are excluded from CSV and available through Export Notes." }
+    ]
   }
 ];
 
 const fields = formSections.flatMap((section) => section.fields);
-const questionnaireFields = fields;
+const questionnaireFields = fields.filter((field) => !field.notesOnly);
 let optionState = loadOptionState();
 applyOptionState();
 let entries = loadEntries();
@@ -479,6 +485,7 @@ function switchView(view) {
 
 function bindBackup() {
   document.querySelector("#exportCsvButton").addEventListener("click", exportCsv);
+  document.querySelector("#exportNotesButton").addEventListener("click", exportNotes);
   document.querySelector("#exportJsonButton").addEventListener("click", exportJson);
   document.querySelector("#importFile").addEventListener("change", importFile);
   document.querySelector("#clearDataButton").addEventListener("click", () => {
@@ -504,6 +511,28 @@ function exportCsv() {
   const headers = ["id", "createdAt", "updatedAt", "schemaVersion", ...questionnaireFields.map((field) => field.id)];
   const rows = entries.map((entry) => headers.map((header) => csvEscape(Array.isArray(entry[header]) ? entry[header].join("; ") : entry[header] ?? "")).join(","));
   downloadFile(`anxiety-checker-${todayStamp()}.csv`, [headers.join(","), ...rows].join("\n"), "text/csv");
+}
+
+function exportNotes() {
+  const notes = entries
+    .filter((entry) => String(entry.notes || "").trim())
+    .map((entry) => {
+      const parts = [
+        `Date: ${formatDate(entry.date)}`,
+        entry.beforeLocation ? `Before location: ${formatEntryValue(entry.beforeLocation)}` : "",
+        entry.afterLocation ? `After location: ${formatEntryValue(entry.afterLocation)}` : "",
+        "",
+        entry.notes.trim()
+      ].filter((part) => part !== "");
+      return parts.join("\n");
+    });
+
+  if (!notes.length) {
+    showToast("No notes to export.");
+    return;
+  }
+
+  downloadFile(`anxiety-checker-notes-${todayStamp()}.txt`, notes.join("\n\n---\n\n"), "text/plain");
 }
 
 function exportJson() {
