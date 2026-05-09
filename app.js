@@ -1,5 +1,5 @@
 const STORAGE_KEY = "anxiety-checker-entries-v1";
-const OPTIONS_KEY = "anxiety-checker-options-v6";
+const OPTIONS_KEY = "anxiety-checker-options-v7";
 const LEGACY_OPTIONS_KEYS = [];
 const SCHEMA_VERSION = 1;
 
@@ -10,7 +10,7 @@ const formSections = [
       { id: "date", label: "Date", type: "date", required: true },
       { id: "severity", label: "Severity", type: "range", min: 0, max: 10, hint: "0 = None, 10 = Unbearable" },
       { id: "rampUpTime", label: "Ramp-Up Time", type: "checkbox", options: ["Built Up Slowly", "Instant", "Not Sure"] },
-      { id: "duration", label: "Approximate Duration", type: "checkbox", options: ["Less Than 5 Minutes", "5-10 Minutes", "10-20 Minutes", "20-30 Minutes", "30-60 Minutes", "More Than 1 Hour", "Not Sure"] }
+      { id: "duration", label: "Approximate Duration", type: "checkbox", preserveOrder: true, options: ["Less Than 5 Minutes", "5-10 Minutes", "10-20 Minutes", "20-30 Minutes", "30-60 Minutes", "More Than 1 Hour", "Not Sure"] }
     ]
   },
   {
@@ -104,17 +104,11 @@ const formSections = [
     fields: [
       { id: "themes", label: "Which Themes Feel Relevant?", type: "checkbox", options: ["Burnout", "Caffeine Sensitivity", "Difficulty Saying No", "Emotions Showing Up Physically", "Family Stress", "Fear of Being Judged", "Fear of Being Trapped", "Fear of Body Symptoms", "Fear of Conflict", "Fear of Disappointing People", "Fear of Embarrassment", "Fear of Losing Control", "Fear of Panic Itself", "Overstimulation", "Past Stressful Experiences", "Perfectionism", "Relationship Stress", "Sleep Issues", "Social Pressure", "Work Pressure", "Other"] }
     ]
-  },
-  {
-    title: "Notes",
-    fields: [
-      { id: "notes", label: "Notes for Therapy", type: "textarea", notesOnly: true, hint: "Optional. These are excluded from CSV and available through Export Notes." }
-    ]
   }
 ];
 
 const fields = formSections.flatMap((section) => section.fields);
-const questionnaireFields = fields.filter((field) => !field.notesOnly);
+const questionnaireFields = fields;
 let optionState = loadOptionState();
 applyOptionState();
 let entries = loadEntries();
@@ -485,7 +479,6 @@ function switchView(view) {
 
 function bindBackup() {
   document.querySelector("#exportCsvButton").addEventListener("click", exportCsv);
-  document.querySelector("#exportNotesButton").addEventListener("click", exportNotes);
   document.querySelector("#exportJsonButton").addEventListener("click", exportJson);
   document.querySelector("#importFile").addEventListener("change", importFile);
   document.querySelector("#clearDataButton").addEventListener("click", () => {
@@ -511,29 +504,6 @@ function exportCsv() {
   const headers = ["id", "createdAt", "updatedAt", "schemaVersion", ...questionnaireFields.map((field) => field.id)];
   const rows = entries.map((entry) => headers.map((header) => csvEscape(Array.isArray(entry[header]) ? entry[header].join("; ") : entry[header] ?? "")).join(","));
   downloadFile(`anxiety-checker-${todayStamp()}.csv`, [headers.join(","), ...rows].join("\n"), "text/csv");
-}
-
-function exportNotes() {
-  const notes = entries
-    .filter((entry) => String(entry.notes || "").trim())
-    .map((entry) => {
-      const parts = [
-        `Date: ${formatDate(entry.date)}`,
-        entry.time ? `Time: ${entry.time}` : "",
-        entry.beforeLocation ? `Before location: ${formatEntryValue(entry.beforeLocation)}` : "",
-        entry.afterLocation ? `After location: ${formatEntryValue(entry.afterLocation)}` : "",
-        "",
-        entry.notes.trim()
-      ].filter((part) => part !== "");
-      return parts.join("\n");
-    });
-
-  if (!notes.length) {
-    showToast("No notes to export.");
-    return;
-  }
-
-  downloadFile(`anxiety-checker-notes-${todayStamp()}.txt`, notes.join("\n\n---\n\n"), "text/plain");
 }
 
 function exportJson() {
@@ -709,9 +679,9 @@ function applyOptionState() {
 
     const savedOptions = optionState[field.id];
     if (Array.isArray(savedOptions) && savedOptions.length) {
-      field.options = uniqueOptions(savedOptions);
+      field.options = uniqueOptions(savedOptions, field.preserveOrder);
     } else {
-      field.options = uniqueOptions(field.options);
+      field.options = uniqueOptions(field.options, field.preserveOrder);
     }
   }
   saveOptionState();
@@ -721,14 +691,14 @@ function saveOptionState() {
   optionState = {};
   for (const field of fields) {
     if (field.options) {
-      field.options = uniqueOptions(field.options);
+      field.options = uniqueOptions(field.options, field.preserveOrder);
       optionState[field.id] = field.options;
     }
   }
   localStorage.setItem(OPTIONS_KEY, JSON.stringify(optionState));
 }
 
-function uniqueOptions(options) {
+function uniqueOptions(options, preserveOrder = false) {
   const seen = new Set();
   const unique = options
     .map((option) => String(option).trim())
@@ -740,6 +710,9 @@ function uniqueOptions(options) {
       seen.add(key);
       return true;
     });
+  if (preserveOrder) {
+    return unique;
+  }
   return unique.sort(sortOptions);
 }
 

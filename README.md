@@ -19,6 +19,5 @@ The app stores entries in the phone browser's local storage. Use **Backup > Expo
 ## Data
 
 - CSV export is best for spreadsheets and graphs.
-- Notes are excluded from CSV. Use Export Notes for a compiled therapy notes list.
 - JSON export/import is best for full backup and restore, including custom response options. Export JSON after changing survey options.
 - CSV import is supported for restoring exported CSV files.
