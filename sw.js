@@ -1,4 +1,4 @@
-const CACHE_NAME = "anxiety-checker-v7";
+const CACHE_NAME = "anxiety-checker-v8";
 const APP_SHELL = [
   "./",
   "./index.html",
